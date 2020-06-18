@@ -1,17 +1,14 @@
-This example shows how to synchronize your instantsearch url
-if you are using react-router.
+Based on
+<https://github.com/algolia/react-instantsearch/tree/master/examples/react-router>.
 
-## Clone the example
-
-```
-curl https://codeload.github.com/algolia/react-instantsearch/tar.gz/master | tar -xz --strip=2 react-instantsearch-master/examples/react-router
-```
+Shows issue when using a product type selector that removes DOM elements:
+onSearchStateChange() is called once for every item removed--causes duplicate
+history issues requiring hack fix, 2x HTTP requests (b/c invokes both
+`onExternalState()` & `onWidgetsUpdate()`)
 
 ## Start the example
 
 ```sh
-yarn install --no-lockfile
+yarn install
 yarn start
 ```
-
-Read more about react-instantsearch [in our documentation](https://www.algolia.com/doc/guides/building-search-ui/what-is-instantsearch/react/).
