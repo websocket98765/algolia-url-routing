@@ -3,17 +3,15 @@ import qs from 'qs';
 import { useLocation, useHistory } from 'react-router-dom';
 import {
   InstantSearch,
-  HierarchicalMenu,
   Hits,
   Menu,
   Pagination,
   PoweredBy,
-  RatingMenu,
-  RefinementList,
   SearchBox,
-  ClearRefinements,
+  ClearRefinements
 } from 'react-instantsearch-dom';
 import algoliasearch from 'algoliasearch/lite';
+import ProductTypeRefinements from './ProductTypeRefinements';
 
 const searchClient = algoliasearch(
   'latency',
@@ -22,12 +20,12 @@ const searchClient = algoliasearch(
 
 const DEBOUNCE_TIME = 700;
 
-const createURL = state => `?${qs.stringify(state)}`;
+const createURL = (state) => `?${qs.stringify(state)}`;
 
 const searchStateToUrl = (location, searchState) =>
   searchState ? `${location.pathname}${createURL(searchState)}` : '';
 
-const urlToSearchState = location => qs.parse(location.search.slice(1));
+const urlToSearchState = (location) => qs.parse(location.search.slice(1));
 
 function App() {
   const location = useLocation();
@@ -48,6 +46,8 @@ function App() {
   }, [location]);
 
   function onSearchStateChange(nextSearchState) {
+    console.log('onSearchStateChange() called');
+
     clearTimeout(setStateId.current);
 
     setStateId.current = setTimeout(() => {
@@ -63,11 +63,10 @@ function App() {
   return (
     <InstantSearch
       searchClient={searchClient}
-      indexName="instant_search"
+      indexName='instant_search'
       searchState={searchState}
       onSearchStateChange={onSearchStateChange}
-      createURL={createURL}
-    >
+      createURL={createURL}>
       <div>
         <div
           style={{
@@ -75,30 +74,42 @@ function App() {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 10,
-          }}
-        >
+            marginBottom: 10
+          }}>
           <SearchBox />
           <PoweredBy />
         </div>
 
         <div style={{ display: 'flex' }}>
           <div style={{ padding: '0px 20px' }}>
-            <p>Hierarchical Menu</p>
-            <HierarchicalMenu
-              id="categories"
-              attributes={[
-                'hierarchicalCategories.lvl0',
-                'hierarchicalCategories.lvl1',
-                'hierarchicalCategories.lvl2',
-              ]}
+            <h3>Product Type</h3>
+            <Menu attribute='type' />
+
+            <h3>Product Type Refinements</h3>
+            <p>
+              1. Select 'Connectivity' or 'Wireless speakers'. (I've only
+              implemented the example for those.)
+              <br />
+              2.
+              <u>
+                Pretend the refinements below are attributes unique to that
+                product type
+              </u>
+              <br />
+              and we want to show further refinements for the given type of
+              product.
+              <br />
+              <u>For example:</u>
+              <br />
+              <b>Car</b>: carDoors(2/4), horsepower...
+              <br />
+              <b>Bicycle</b>: bikeType (mountain/hybrid/road), bikeFrame
+              (aluminum/carbon/steel)...
+            </p>
+
+            <ProductTypeRefinements
+              productType={searchState.menu && searchState.menu.type}
             />
-            <p>Menu</p>
-            <Menu attribute="type" />
-            <p>Refinement List</p>
-            <RefinementList attribute="brand" />
-            <p>Range Ratings</p>
-            <RatingMenu attribute="rating" max={6} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
